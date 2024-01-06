@@ -11,14 +11,11 @@ import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.Composable
-import com.example.taga.presentation.PermissionUtils
 import com.example.taga.ui.data.ConnectionState
 import com.example.taga.ui.data.DataResult
 import com.example.taga.ui.data.ReceiveManager
 import com.example.taga.ui.util.Resource
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -32,12 +29,11 @@ class BLEReceiveManager @Inject constructor(
     private val bluetoothAdapter: BluetoothAdapter,
     private val context: Context
 ): ReceiveManager {
-//    private val DEVICE_NAME = 'ESP32'
+    private val DEVICE_NAME = "ESP32"
     private val SERVICE_UUID = "" //Can use an app to find UUID's
     private val CHARACTERISTICS_UUID = ""
 
-    override val data: MutableSharedFlow<Resource<DataResult>>
-        get() = MutableSharedFlow()
+    override val data: MutableSharedFlow<Resource<DataResult>> = MutableSharedFlow()
 
     private val bleScanner by lazy{
         bluetoothAdapter.bluetoothLeScanner
@@ -83,7 +79,7 @@ class BLEReceiveManager @Inject constructor(
                     this@BLEReceiveManager.gatt = gatt
                 } else if(newState == BluetoothGatt.STATE_DISCONNECTED){
                     coroutineScope.launch {
-                        data.emit(Resource.Success(data = DataResult("TODO: WHAT MESSAGE NEEDED", ConnectionState.Disconnected)))
+                        data.emit(Resource.Success(data = DataResult("TODO: WHAT MESSAGE NEEDED", ConnectionState.Disconnected, alerted = null)))
                     }
                     gatt.close()
                 }
@@ -227,6 +223,6 @@ class BLEReceiveManager @Inject constructor(
     }
 
 
-    val permissionState = rememberMultiplePermissionsState(permissions = PermissionUtils.permissions)
+//    val permissionState = rememberMultiplePermissionsState(permissions = PermissionUtils.permissions)
 
 }

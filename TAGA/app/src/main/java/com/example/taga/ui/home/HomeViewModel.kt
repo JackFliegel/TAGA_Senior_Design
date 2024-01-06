@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.taga.ui.BLE.BLEReceiveManager
 import com.example.taga.ui.data.ConnectionState
+import com.example.taga.ui.data.DataResult
 import com.example.taga.ui.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -22,7 +23,7 @@ class HomeViewModel @Inject constructor(
         private set
     var errorMessage by mutableStateOf<String?>(null)
         private set
-    var alerted by mutableStateOf(false)
+    var alerted by mutableStateOf<String?>(null)
         private set
     var connectionState by mutableStateOf<ConnectionState?>(null)
         private set
@@ -32,8 +33,12 @@ class HomeViewModel @Inject constructor(
             bleReceiveManager.data.collect{ result ->
                 when(result){
                     is Resource.Success<*> -> {
-                        connectionState = result.data.connectionState
-                        alerted = result.data.alert
+//                        connectionState = result.data.connectionState
+//                        alerted = result.data.alerted
+                        (result.data as? DataResult)?.let { dataResult ->
+                            connectionState = dataResult.connectionState
+                            alerted = dataResult.alerted
+                        }
                     }
                     is Resource.Loading<*> -> {
                         initializingMessage = result.message
@@ -52,8 +57,8 @@ class HomeViewModel @Inject constructor(
         bleReceiveManager.disconnect()
     }
 
-    fun recconnect() {
-        bleReceiveManager.recconnect()
+    fun reconnect() {
+        bleReceiveManager.reconnect()
     }
 
     fun initliazeConnection(){
@@ -65,7 +70,7 @@ class HomeViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        bleReceiveManager.closeConnection()
+        bleReceiveManager.stopReceiving() //Might have to change if clearing makes BLE disconnect (original was closeConnection)
     }
 
 

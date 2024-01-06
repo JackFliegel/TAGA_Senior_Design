@@ -2,5 +2,6 @@ package com.example.taga.ui.data
 
 data class DataResult(
     val signal:String,
-    val connectionState: ConnectionState
+    val connectionState: ConnectionState,
+    val alerted:String?,
 )

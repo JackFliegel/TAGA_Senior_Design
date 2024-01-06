@@ -32,10 +32,18 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion="1.5.7"
     }
 }
 
 dependencies {
+    implementation("androidx.compose.ui:ui:1.1.0")
+    implementation("androidx.compose.material:material:1.1.0")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.1.0")
+// Include other necessary Compose artifacts based on your needs.
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")

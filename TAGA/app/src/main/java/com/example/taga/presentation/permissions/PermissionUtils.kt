@@ -1,4 +1,4 @@
-package com.example.taga.presentation
+package com.example.taga.presentation.permissions
 
 import android.Manifest
 import android.os.Build
