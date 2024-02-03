@@ -1,7 +1,22 @@
 #include <BLEDevice.h>
 
+// --------
+// Constants
+// --------
+#define SERVICE_UUID        "25AE1441-05D3-4C5B-8281-93D4E07420CF"
+#define CHAR_READ_UUID      "25AE1442-05D3-4C5B-8281-93D4E07420CF"
+#define CHAR_WRITE_UUID     "25AE1443-05D3-4C5B-8281-93D4E07420CF"
+#define CHAR_INDICATE_UUID  "25AE1444-05D3-4C5B-8281-93D4E07420CF"
+
+#define CMD_HELP "help"
+#define CMD_DISCONNECT "disc"
+#define CMD_READ "read"
+#define CMD_WRITE "write="
+
 BLEServer* pServer;
-BLECharacteristic* pCharacteristic;
+BLECharacteristic* pReadCharacteristic;
+BLECharacteristic* pWriteCharacteristic;
+BLECharacteristic* pIndicateCharacteristic;
 int rssiValue = 0;
 
 class MyServerCallbacks : public BLEServerCallbacks {
@@ -32,17 +47,37 @@ void setup() {
     pServer->setCallbacks(pCallbacks);
 
     // Create the BLE Service
-    BLEService *pService = pServer->createService(BLEUUID("180D")); // Generic Heart Rate Service
+    BLEService *pService = pServer->createService(BLEUUID(SERVICE_UUID));
 
-    // Create the BLE Characteristic
-    pCharacteristic = pService->createCharacteristic(
-                        BLEUUID("2A37"), // Heart Rate Measurement Characteristic
-                        BLECharacteristic::PROPERTY_READ |
-                        BLECharacteristic::PROPERTY_NOTIFY
-                    );
+    // // Create the BLE Characteristic
+    // pCharacteristic = pService->createCharacteristic(
+    //                     BLEUUID("2A37"), // Heart Rate Measurement Characteristic
+    //                     BLECharacteristic::PROPERTY_READ |
+    //                     BLECharacteristic::PROPERTY_NOTIFY
+    //                 );
 
-    // Set the initial value for the characteristic
-    pCharacteristic->setValue("Hello, World!");
+        // Create a Read Characteristic
+    pReadCharacteristic = pService->createCharacteristic(
+                             BLEUUID(CHAR_READ_UUID),
+                             BLECharacteristic::PROPERTY_READ
+                         );
+
+    // Create a Write Characteristic
+    pWriteCharacteristic = pService->createCharacteristic(
+                              BLEUUID(CHAR_WRITE_UUID),
+                              BLECharacteristic::PROPERTY_WRITE
+                          );
+
+    // Create an Indicate Characteristic
+    pIndicateCharacteristic = pService->createCharacteristic(
+                                 BLEUUID(CHAR_INDICATE_UUID),
+                                 BLECharacteristic::PROPERTY_INDICATE
+                             );
+
+    // Set initial values for characteristics
+    pReadCharacteristic->setValue("Read Value");
+    pWriteCharacteristic->setValue("Write Value");
+    pIndicateCharacteristic->setValue("Indicate Value");
 
     // Start the service
     pService->start();
@@ -51,8 +86,8 @@ void setup() {
     BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
     pAdvertising->addServiceUUID(pService->getUUID());
     pAdvertising->setScanResponse(true);
-    pAdvertising->setMinPreferred(0x06);
-    pAdvertising->setMinPreferred(0x12);
+    pAdvertising->setMinPreferred(0x32); // 50 ms = 80 * 0.625 ms
+    pAdvertising->setMaxPreferred(0x64); // 100 ms = 160 * 0.625 ms
     BLEDevice::startAdvertising();
 
     Serial.println("Bluetooth device is advertising...");

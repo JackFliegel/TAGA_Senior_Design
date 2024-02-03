@@ -30,8 +30,8 @@ class BLEReceiveManager @Inject constructor(
     private val context: Context
 ): ReceiveManager {
     private val DEVICE_NAME = "ESP32"
-    private val SERVICE_UUID = "" //Can use an app to find UUID's
-    private val CHARACTERISTICS_UUID = ""
+    private val SERVICE_UUID = "12345678-1234-1234-1234-123456789abc" //Can use an app to find UUID's
+    private val CHARACTERISTICS_UUID = "2A37"
 
     override val data: MutableSharedFlow<Resource<DataResult>> = MutableSharedFlow()
 

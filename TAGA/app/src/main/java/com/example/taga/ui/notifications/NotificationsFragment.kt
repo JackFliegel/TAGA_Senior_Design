@@ -1,6 +1,7 @@
 package com.example.taga.ui.notifications
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +30,7 @@ class NotificationsFragment : Fragment() {
         ): View {
             _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
             val root: View = binding.root
+            Log.d("notification tag", "Made it to notifications")
 
             val notificationsViewModel =
                 ViewModelProvider(this).get(NotificationsViewModel::class.java)
